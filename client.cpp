@@ -6,9 +6,7 @@
 //  Copyright © 2019 Blake Sweet. All rights reserved.
 
 #include <iostream>
-#include "client.h"
 using namespace std;
 
-client::client(){
-	
+int main(int argc, const char * argv[]) {
 }
