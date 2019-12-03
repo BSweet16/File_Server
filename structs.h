@@ -7,23 +7,32 @@
 *****************************************************************/
 #include <stdio.h>
 #include <string>
-#include <iostream>
+#include <cstdint> // uint8_t
 
+#define MAXDATASIZE 100
 using namespace std;
 
-struct secretKey {
+
+struct clientToServer {
     //secretKey is the secret key contained in the request.
-    unsigned int secKey = 123456;
+    unsigned int secKey;
     //newKey (0), fileGet (1), fileDigest (2), fileRun (3).
     unsigned short requestType; 
+    //arbitrary values for padding
     unsigned short padding;
 };
 
-/*struct host {
-    string h_name;		//official name of host 
-    int h_addrtype;		//host address type, always AF_INET
-	int h_length;		//length of address in bytes
-}*/
 
-//Struct Types
+struct ServerToClient {
+    //exactly 8-bit signed int return code: 0 = success, -1 = failure
+    int8_t retCode;
+    //arbitrary values for padding
+    char pad1[3];
+    //fileGet, fileDigest, and (extra credit) fileRun response
+    unsigned short retValLength;
+    char retVal[MAXDATASIZE - 5];
+
+    //unsigned int newKey;
+
+}
 
