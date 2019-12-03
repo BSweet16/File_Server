@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     cS.requestType = ntohs(0);
     //arbitary numbers for padding
     cS.padding = ntohs(11);
-    cS.details = atoi(argv[4]);
+    cS.details = argv[4];
    
 
     //creating socket
@@ -81,16 +81,36 @@ int main(int argc, char *argv[])
         error("failure\n");
     }
     
-    char buffer[MAXDATASIZE];
+    
     //concatonate struct values for transmission
-    sprintf(buffer, "%d%d%d%d", cS.secKey, cS.requestType, cS.padding, cS.details); 
-
-    n = write(socketfd, buffer, strlen(buffer));
-    if (n < 0){
-		error("ERROR writing to socket");
+    //sprintf(buffer, "%d%d%d%d", cS.secKey, cS.requestType, cS.padding, cS.details); 
+    
+    //copy contects of struct to buffer for transmission
+    unsigned char *buffer;
+    memcpy(buffer, &cS, sizeof(cS));
+    
+    //write buffer to socket, should be in network byte order
+    send(socketfd, &buffer, sizeof(buffer), 0)
+    //rio_writen????
+    //n = write(socketfd, buffer, strlen(buffer)); 
+    //if (n < 0){
+	//	error("ERROR writing to socket");
+    // }
+    //clear out buffer
+	bzero(buffer, 256);
+    //read in return data from server
+   // n = read(socketfd, buffer, 255);
+   //??????????????
+    //int recv(int sockfd, void *buf, int len, int flags);
+    if(n == -1){
+        cout << "failure\n";
+        exit(0);
+    }
+    else{
+        cout << "success\n";
+        exit(0);
     }
 
-	bzero(buffer, 256);
     close(socketfd);
 	return 0;
 
