@@ -10,6 +10,7 @@
 #include <netinet/in.h> //defines the sockaddr_in struct
 #include <netdb.h>      //gethostbyname(), struct hostent
 #include <iostream>
+#include <arpa/inet.h> //inet_pton
 
 //#define SERVER "localhost"
 //#define PORT "2100"
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     //returns pointer to hostent constaining information about that host, NULL = couldnt locate host
     //server = gethostbyname(argv[1]);
 
-    string hostName = argv[1]; //should this be defined or is it dynamic, how is this tested?
+    //string hostName = argv[1]; //should this be defined or is it dynamic, how is this tested?
     unsigned short portNum = atoi(argv[2]);
 
     //load up struct from cmd arguments
@@ -54,23 +55,27 @@ int main(int argc, char *argv[])
     //arbitary numbers for padding
     cS.padding = ntohs(11);
     cS.details = argv[4];
-   
 
     //creating socket
     socketfd = socket(AF_INET, SOCK_STREAM, 0);
-    
+
     if (socketfd == -1)
     {
         error("failure\n");
     }
-    //clear out server_addr
-    bzero(&server_addr, sizeof(server_addr)); 
 
+    //clear out server_addr
+    bzero(&server_addr, sizeof(server_addr));
+    //memset(&serv_addr, '0', sizeof(serv_addr));
+    if (inet_pton(AF_INET, argv[1], &server_addr.sin_addr) <= 0)
+    {
+        error("inet_pton error occured\n");
+    }
     //This code sets the fields in the  serv_addr struct
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(portNum);         //htons() = host to network byte order
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //not sure what to put here, this may be correct
-
+    server_addr.sin_port = htons(portNum); //htons() = host to network byte order
+                                           // server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //not sure what to put here, this may be correct
+    //inet_pton(AF_INET, "0.0.0.0", &server_addr.sin_addr)
 
     //connect() called by client to connect to server
     //--(socket fd, & of host w/ portnum, sizeof this address)
@@ -80,38 +85,48 @@ int main(int argc, char *argv[])
     {
         error("failure\n");
     }
-    
-    
+
     //concatonate struct values for transmission
-    //sprintf(buffer, "%d%d%d%d", cS.secKey, cS.requestType, cS.padding, cS.details); 
-    
-    //copy contects of struct to buffer for transmission
-    unsigned char *buffer;
-    memcpy(buffer, &cS, sizeof(cS));
-    
-    //write buffer to socket, should be in network byte order
-    send(socketfd, &buffer, sizeof(buffer), 0)
-    //rio_writen????
-    //n = write(socketfd, buffer, strlen(buffer)); 
-    //if (n < 0){
-	//	error("ERROR writing to socket");
-    // }
-    //clear out buffer
-	bzero(buffer, 256);
-    //read in return data from server
-   // n = read(socketfd, buffer, 255);
-   //??????????????
-    //int recv(int sockfd, void *buf, int len, int flags);
-    if(n == -1){
-        cout << "failure\n";
-        exit(0);
-    }
-    else{
-        cout << "success\n";
-        exit(0);
+    //sprintf(buffer, "%d%d%d%d", cS.secKey, cS.requestType, cS.padding, cS.details);
+    while (1)
+    {
+
+        //copy contects of struct to buffer for transmission
+        unsigned char *buffer;
+        memcpy(buffer, &cS, sizeof(cS));
+
+        //write buffer to socket, should be in network byte order
+        retVal = send(socketfd, &buffer, sizeof(buffer), 0)
+        if (retVal == -1)
+        {
+            error("send() failure\n");
+        }
+            //rio_writen????
+            //n = write(socketfd, buffer, strlen(buffer));
+            //if (n < 0){
+            //	error("ERROR writing to socket");
+            // }
+            //clear out buffer
+            bzero(buffer, 256);
+        //read in return data from server
+        // n = read(socketfd, buffer, 255);
+        //
+        retVal = recv(int sockfd, void *buf, int len, int flags);
+        if (retVal == -1)
+        {
+            error("recv() failure\n");
+        }
     }
 
     close(socketfd);
-	return 0;
-
+    return 0;
 }
+
+
+/*recv() from client;
+while(condition)
+{
+  send() from server; //acknowledge to client
+  recv() from client;
+}
+*/

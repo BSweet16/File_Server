@@ -26,7 +26,7 @@ struct clientToServer {
 
 struct ServerToClient {
     //exactly 8-bit(1 byte) signed int return code: 0 = success, -1 = failure
-    int8_t retCode;
+    int8_t returnCode;
     //arbitrary values for padding
     char pad[3];
     //fileGet, fileDigest, and (extra credit) fileRun response
