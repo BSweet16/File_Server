@@ -19,11 +19,11 @@ struct secretKey {
     unsigned short padding;
 };
 
-struct host {
+/*struct host {
     string h_name;		//official name of host 
     int h_addrtype;		//host address type, always AF_INET
 	int h_length;		//length of address in bytes
-}
+}*/
 
 //Struct Types
 
