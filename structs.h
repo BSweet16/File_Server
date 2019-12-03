@@ -30,9 +30,7 @@ struct ServerToClient {
     char pad1[3];
     //fileGet, fileDigest, and (extra credit) fileRun response
     unsigned short retValLength;
-    char retVal[MAXDATASIZE - 5];
-
-    //unsigned int newKey;
-
+    //
+    char returnData[MAXDATASIZE - 5];
 }
 
