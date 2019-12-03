@@ -6,7 +6,7 @@
 //References:							
 *****************************************************************/
 #include <stdio.h>
-#include <string>
+//#include <string>
 #include <cstdint> // int8_t
 
 #define MAXDATASIZE 100
@@ -14,12 +14,13 @@ using namespace std;
 
 
 struct clientToServer {
-    //secretKey is the secret key contained in the request.
-    unsigned int secKey = 123456;
+    //secret key contained in the request.
+    unsigned int secKey;
     //newKey (0), fileGet (1), fileDigest (2), fileRun (3).
     unsigned short requestType; 
     //arbitrary values for padding
     unsigned short padding;
+    char details[MAXDATASIZE];
 };
 
 
@@ -27,9 +28,9 @@ struct ServerToClient {
     //exactly 8-bit(1 byte) signed int return code: 0 = success, -1 = failure
     int8_t retCode;
     //arbitrary values for padding
-    char pad1[3];
+    char pad[3];
     //fileGet, fileDigest, and (extra credit) fileRun response
     unsigned short retValLength;
-    //
+    //max size for return data, display in hex
     char returnData[MAXDATASIZE - 5];
 };
