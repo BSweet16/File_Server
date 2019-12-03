@@ -32,5 +32,4 @@ struct ServerToClient {
     unsigned short retValLength;
     //
     char returnData[MAXDATASIZE - 5];
-}
-
+};
