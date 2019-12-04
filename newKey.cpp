@@ -110,8 +110,9 @@ int main(int argc, char *argv[])
             bzero(buffer, 256);
         //read in return data from server
         // n = read(socketfd, buffer, 255);
-        //
-        retVal = recv(int sockfd, void *buf, int len, int flags);
+        
+        //4th param flag = MSG_DONTWAIT for non-blocking mode
+        retVal = recv(socketfd, buffer, sizeof(buffer), );
         if (retVal == -1)
         {
             error("recv() failure\n");
