@@ -6,7 +6,7 @@
 //  Copyright © 2019 Blake Sweet. All rights reserved.
 
 #include <iostream>
-#include "struct.h"
+#include "structs.h"
 using namespace std;
 
 void printOutput(unsigned int secretKey, short requestType){
