@@ -12,25 +12,19 @@
 #define MAXDATASIZE 100
 using namespace std;
 
-
+//requestType = newKey (0), fileGet (1), fileDigest (2), fileRun (3).
 struct clientToServer {
-    //secret key contained in the request.
-    unsigned int secKey;
-    //newKey (0), fileGet (1), fileDigest (2), fileRun (3).
-    unsigned short requestType; 
-    //arbitrary values for padding
-    unsigned short padding;
-    char details[MAXDATASIZE];
+    unsigned int secKey;        //4 bytes
+    unsigned short requestType; //2 bytes
+    unsigned short padding;     //2 bytes
+    char details[MAXDATASIZE];  //up to 100 bytes
 };
 
 
 struct ServerToClient {
-    //exactly 8-bit(1 byte) signed int return code: 0 = success, -1 = failure
-    int8_t returnCode;
-    //arbitrary values for padding
-    char pad[3];
-    //fileGet, fileDigest, and (extra credit) fileRun response
-    unsigned short retValLength;
-    //max size for return data, display in hex
-    char returnData[MAXDATASIZE - 5];
+    int8_t returnCode;          //1 byte 0 or -1
+    char pad[3];                //3 bytes
+    //below used fileGet, fileDigest, and (extra credit) fileRun response
+    unsigned short retValLength; //2bytes
+    char returnData[MAXDATASIZE - 6]; //94 bytes, in hex
 };
