@@ -1,16 +1,20 @@
 //#pragma once
 /*****************************************************************
 * Header file to use in your implementation of the project.      *
-* Please, do not modify any value or structure that appears here *
-*	
-//References:							
 *****************************************************************/
+extern "C"
+{
+  #include "csapp.h"
+}
+
 #include <stdio.h>
-//#include <string>
 #include <cstdint> // int8_t
 
 #define MAXDATASIZE 100
 using namespace std;
+
+// Const values
+const char BUFFER_PADDING[2] = {0x00, 0x00}; // 2 bytes of padding (arbitrary 0's)
 
 
 struct clientToServer {
