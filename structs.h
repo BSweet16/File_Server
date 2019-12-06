@@ -1,6 +1,6 @@
 //#pragma once
 /*****************************************************************
-* Header file to use in your implementation of the project.      *
+* Header file containing constants for the "library"             *						
 *****************************************************************/
 extern "C"
 {

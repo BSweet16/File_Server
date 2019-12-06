@@ -1,25 +1,27 @@
 # Makefile for Project 5 of CS270, Fall 2019.
-
-PROJECT = main
-GOAL = main
 CFLAGS = -Wall
-CC = g++
-CFLAGS = -Wall -g
+LDLIBS = -lpthread
 
-$(GOAL): $(GOAL).cpp
-	$(CC) $(CFLAGS) $(GOAL).cpp -o $(GOAL)
+SERVER = filed
+CLIENTS = newKey fileGet fileDigest fileRun
+CSAPP = csapp.h csapp.cpp
 
-run: tags $(GOAL)
-	./$(GOAL)
+all: $(CSAPP) $(SERVER) $(CLIENTS)
 
-tags: $(GOAL).cpp
-	ctags $(GOAL).cpp
+csapp.h:
+	wget http://csapp.cs.cmu.edu/2e/ics2/code/include/csapp.h
 
+csapp.c:
+	wget http://csapp.cs.cmu.edu/2e/ics2/code/src/csapp.c
+
+csapp.o: csapp.h csapp.cpp
+
+$(SERVER): csapp.o
+$(CLIENTS): csapp.o
+
+.PHONY: clean
 clean:
-	rm -f $(GOAL) tags
+	/bin/rm -rf csapp.h csapp.cpp *.o filed newKey fileGet fileDigest fileRun
 
-.PHONY: bundle
-bundle: $(PROJECT).tgz
-
-$(PROJECT).tgz: $(GOAL).cpp Makefile README.txt
-	tar -czf $(PROJECT).tgz $(GOAL).cpp Makefile README.txt
+zip:
+	zip project5.zip *.cpp README
