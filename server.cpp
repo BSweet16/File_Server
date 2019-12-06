@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "structs.h"
+#include "common.cpp"
 
 using namespace std;
 
@@ -27,19 +27,29 @@ void DieWithError(string errorMessage){
 }
 
 int main(int argc, const char * argv[]) {
-	// Ex) filed 5678 987654 (5678 = port number, 987654 = secret key) 
-	if (argc > 3){
-		perror(argv[0]);
-		exit(1); // Error
-	}
-	else if (argc < 3){
-		cout << "Correct usage: ./[ServerName] [Port Number] [Secret Key]\n";
-		exit(0); // Normal exit type
-	}
+	while{
+		// Ex) filed 5678 987654 (5678 = port number, 987654 = secret key) 
+		if (argc > 3){
+			perror(argv[0]);
+			exit(1); // Error
+		}
+		else if (argc < 3){
+			cout << "Correct usage: ./[ServerName] [Port Number] [Secret Key]\n";
+			exit(0); // Normal exit type
+		}
 
-	// Local Variables
-	unsigned int key;
-	short type;
+		// Local Variables
+		string msgFromClient; // Max size = 102 (Output)
+		string msgToClient; // Max size = 108 (Input)
+		unsigned int key;
+		short type;
 
-	rio_readn();
-}
+		// Read in to msgFromClient
+
+
+		// Make message back to client
+		// msgToClient += ? ;
+		// send(msgToClient.c_str()); // Send back as .c_str() for C
+
+	} // while()
+} // End of main
