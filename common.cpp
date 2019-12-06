@@ -14,15 +14,27 @@ const unsigned int MAXDATASIZE = 100;
 
 // Return 0 on success, -1 on failure
 int newKey(const char *machineName, unsigned short port, unsigned int secretKey, unsigned int newKey){
+    int answer;
 
+    // Code
+
+    return answer;
 }
 
 int fileGet(const char *machineName, unsigned int port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength){
+    int answer;
 
+    // Code
+    
+    return answer;
 }
 
 int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength){
+    int answer;
 
+    // Code
+    
+    return answer;
 }
 
 // Extra Credit
