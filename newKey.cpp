@@ -1,5 +1,4 @@
 #include "common.cpp"
-#include "csapp.h"
 #include <string>
 #include <cstring>
 #include <string.h>
@@ -12,6 +11,10 @@
 #include <netdb.h>      //gethostbyname(), struct hostent
 #include <iostream>
 #include <arpa/inet.h> //inet_pton
+
+extern "C" {
+#include "csapp.h"
+}
 
 //#define SERVER "localhost"
 //#define PORT "2100"
