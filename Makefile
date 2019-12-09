@@ -1,3 +1,17 @@
+CFLAGS = -Wall
+LDLIBS = -lpthread
+
+SERVER = filed
+CLIENTS = newKey fileGet fileDigest fileRun
+CSAPP = csapp.h csapp.c
+
+all: $(CSAPP) $(SERVER) $(CLIENTS)
+
+csapp.h:
+	wget http://csapp.cs.cmu.edu/2e/ics2/code/include/csapp.h
+
+csapp.c:
+	wget http://csapp.cs.cmu.edu/2e/ics2/code/src/csapp.c
 
 csapp.o: csapp.h csapp.c
 
@@ -10,4 +24,3 @@ clean:
 
 zip:
 	zip project5.zip *.c README
-
