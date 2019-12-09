@@ -28,9 +28,9 @@ int newKey(const char *machineName, unsigned short port, unsigned int secretKey,
 	Rio_readinitb(&rio, clientfd);
 
 	//send seckey for validation from server
-	Rio_writen(clientfd, secKey, sizeof(secKey);
+	Rio_writen(clientfd, secKey, sizeof(secKey));
 	//tell server what type of request this is
-	Rio_writen(clientfd, type, sizeof(type);
+	Rio_writen(clientfd, type, sizeof(type));
 
 	Rio_readn(clientfd, answer, sizeof(answer));
 	if (answer == -1) {
@@ -38,8 +38,8 @@ int newKey(const char *machineName, unsigned short port, unsigned int secretKey,
 	}
 	else {
 		
-		Rio_writen(clientfd, BUFFER_PADDING, sizeof(BUFFER_PADDING);
-		Rio_writen(clientfd, formattedNewKey, sizeof(formattedNewKey);
+		Rio_writen(clientfd, BUFFER_PADDING, sizeof(BUFFER_PADDING));
+		Rio_writen(clientfd, formattedNewKey, sizeof(formattedNewKey));
 		Close(clientfd);
 		return answer;
 	}
@@ -62,4 +62,5 @@ int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, c
 }
 
 // Extra Credit
-int fileRun(const char *machineName, unsigned short port, unsigned int secretKey, const char *request, char *result, unsigned int *resultLength);
+//int fileRun(const char *machineName, unsigned short port, unsigned int secretKey, 
+//const char *request, char *result, unsigned int *resultLength);
