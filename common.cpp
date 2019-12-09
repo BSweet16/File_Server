@@ -29,6 +29,7 @@ int newKey(const char *machineName, unsigned short port, unsigned int secretKey,
 
 	//send seckey for validation from server
 	Rio_writen(clientfd, secKey, sizeof(secKey);
+
 	//tell server what type of request this is
 	Rio_writen(clientfd, type, sizeof(type);
 
@@ -37,7 +38,6 @@ int newKey(const char *machineName, unsigned short port, unsigned int secretKey,
 		return answer;
 	}
 	else {
-		
 		Rio_writen(clientfd, BUFFER_PADDING, sizeof(BUFFER_PADDING);
 		Rio_writen(clientfd, formattedNewKey, sizeof(formattedNewKey);
 		Close(clientfd);
@@ -45,13 +45,50 @@ int newKey(const char *machineName, unsigned short port, unsigned int secretKey,
 	}
 }
 
-int fileGet(const char *machineName, unsigned int port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength) {
-	int answer;
+int fileGet(const char *machineName, unsigned int port, unsigned int secretKey, 
+			const char *fileName, char *result, unsigned int *resultLength) {
+	// Usage: /fileGet machineName port secretKey fileName
+	// Local Variable
+	int responseAnswer = 0; 
+	rio_t rio;
+	int clientfd;
 
-	// Code
+	//change info to network byte order
+	unsigned int secKey = htonl(secretKey);
+	unsigned short type = htons(0);
+	unsigned int recievedFileName = htonl(newKey);
 
-	return answer;
-}
+	clientfd = Open_clientfd(machineName, port);
+	Rio_readinitb(&rio, clientfd);
+
+	//send seckey for validation from server
+	Rio_writen(clientfd, secKey, sizeof(secKey);
+		
+	//tell server what type of request this is
+	Rio_writen(clientfd, type, sizeof(type);
+
+	Rio_readn(clientfd, responseAnswer, sizeof(responseAnswer));
+	if (responseAnswer == -1) {
+		return responseAnswer;
+	}
+	else {
+		if (int openFile = open(fileName, 0) == 0){ // If the file exists
+			// Transmit first 100 bytes or size of the file back to the client
+			if (fileName.size() <= 100){
+				// Send the file
+				Rio_writen(clientfd, openFile, sizeof(openFile);
+			}
+			else { // Only send first 100 bytes
+				Rio_writen(clientfd, openFile, 100;
+			}
+		}
+		else{
+			perror("Failed to open file");
+		}
+		close(clientfd);
+		return responseAnswer;
+	}
+}// fileGet
 
 int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength) {
 	int answer;
