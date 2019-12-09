@@ -28,73 +28,85 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-	int listenfd, connfd, port;
-	socklen_t clientlen;
-	struct sockaddr_in clientaddr;
-	struct hostent *hp;
-	char *haddrp;
-	unsigned int secKey = 123456;
-	string dataDetail;
-	int status = 0;
-	unsigned short reqType;
+	while(1){
+		// Ex) filed 5678 987654 (5678 = port number, 987654 = secret key) 
+		if (argc > 3){
+			perror(argv[0]);
+			exit(1); // Error
+		}
+		else if (argc < 3){
+			cout << "Correct usage: ./[ServerName] [Port Number] [Secret Key]\n";
+			exit(0); // Normal exit type
+		}
 
-	if (argc > 3) {
-		perror(argv[0]);
-		exit(1); // Error
-	}
-	else if (argc < 3) {
-		cout << "Correct usage: ./[ServerName] [Port Number] [Secret Key]\n";
-		exit(0); // Normal exit type
-	}
+		int listenfd, connfd, port;
+		socklen_t clientlen;
+		struct sockaddr_in clientaddr;
+		struct hostent *hp;
+		char *haddrp;
+		unsigned int secKey = 123456;
+		string dataDetail;
+		int status = 0;
+		unsigned short reqType;
 
-	port = atoi(argv[1]);
-	testKey = atoi(argv[2]);
+		if (argc > 3) {
+			perror(argv[0]);
+			exit(1); // Error
+		}
+		else if (argc < 3) {
+			cout << "Correct usage: ./[ServerName] [Port Number] [Secret Key]\n";
+			exit(0); // Normal exit type
+		}
 
-	if (testKey != secKey) {
-		exit(0)
-	}
+		port = atoi(argv[1]);
+		testKey = atoi(argv[2]);
 
-	listenfd = Open_listenfd(port);
-	clientlen = sizeof(clientaddr);
+		if (testKey != secKey) {
+			exit(0)
+		}
 
-	connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
+		listenfd = Open_listenfd(port);
+		clientlen = sizeof(clientaddr);
 
-	/* Determine the domain name and IP address of the client */
-	hp = Gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr,
-		sizeof(clientaddr.sin_addr.s_addr), AF_INET);
-	haddrp = inet_ntoa(clientaddr.sin_addr);
+		connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
 
-	//printf("server connected to %s (%s)\n", hp->h_name, haddrp);
+		/* Determine the domain name and IP address of the client */
+		hp = Gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr,
+			sizeof(clientaddr.sin_addr.s_addr), AF_INET);
+		haddrp = inet_ntoa(clientaddr.sin_addr);
 
-	unsigned int clientKey;
-	//readin key sent from client to verify
-	Rio_readn(listenfd, clientKey, sizeof(clientKey));
-	//check request type
-	
-	Rio_readn(listenfd, reqType, sizeof(reqType));
-	//ntohl() - to convert from network to host order
-	if (clientKey != secKey) {
-		int rVal = -1;
-		Rio_writen(listenfd, rVal, sizeof(rVal));
-		close(listenfd);
-		printOutput(secKey, reqType, dataDetail, status);
-	}
-	//if key is valid, process the rest of client info
-	else{
-		if (reqType == 0) {
-			//read in buffer?
-			char BUFFER_PADDING[2];
-			Rio_readn(listenfd, BUFFER_PADDING, sizeof(BUFFER_PADDING));
-			//read in new secret key
-			unsigned int newKeyfromClient;
-			Rio_readn(listenfd, newKeyfromClient, sizeof(newKeyfromClient));
-			dataDetail = newKeyfromClient;
+		//printf("server connected to %s (%s)\n", hp->h_name, haddrp);
+
+		unsigned int clientKey;
+		//readin key sent from client to verify
+		Rio_readn(listenfd, clientKey, sizeof(clientKey));
+		//check request type
+		
+		Rio_readn(listenfd, reqType, sizeof(reqType));
+		//ntohl() - to convert from network to host order
+		if (clientKey != secKey) {
+			int rVal = -1;
+			Rio_writen(listenfd, rVal, sizeof(rVal));
+			close(listenfd);
 			printOutput(secKey, reqType, dataDetail, status);
-			secKey = newKeyfromClient;
 		}
-		else if (reqType == 1) {
-			//Rio_readn(listenfd, )
+		//if key is valid, process the rest of client info
+		else{
+			if (reqType == 0) {
+				//read in buffer?
+				char BUFFER_PADDING[2];
+				Rio_readn(listenfd, BUFFER_PADDING, sizeof(BUFFER_PADDING));
+				//read in new secret key
+				unsigned int newKeyfromClient;
+				Rio_readn(listenfd, newKeyfromClient, sizeof(newKeyfromClient));
+				dataDetail = newKeyfromClient;
+				printOutput(secKey, reqType, dataDetail, status);
+				secKey = newKeyfromClient;
+			}
+			else if (reqType == 1) {
+				//Rio_readn(listenfd, )
+			}
 		}
-	}
+	} // While()
 	return 0;
 } // End of main
