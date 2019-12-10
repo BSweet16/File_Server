@@ -52,6 +52,7 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 	int responseAnswer = 0; 
 	rio_t rio;
 	int clientfd;
+	char *fileBuff[MAXDATASIZE];
 
 	//change info to network byte order
 	unsigned int secKey = htonl(secretKey);
@@ -67,22 +68,23 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 	//tell server what type of request this is
 	Rio_writen(clientfd, type, sizeof(type);
 
-	Rio_readn(clientfd, responseAnswer, sizeof(responseAnswer));
-	if (responseAnswer == -1) {
-		return responseAnswer;
-	}
-	else {
-		char *fileBuff[MAXDATASIZE];
-		if ((ssize_t numFileBytes = read(fileName, fileBuff, MAXDATASIZE)) >= 0){ // If the file exists
-			// Transmit first 100 bytes or size of the file back to the client
-			Rio_writen(clientfd, &fileBuff, sizeof(fileBuff);
+	while(1){
+		// Transmit first 100 bytes or size of the file back to the client
+		size_t numReadBytes = Rio_readn(clientfd, fileBuff, MAXDATASIZE);
+		
+		if (numReadBytes == 0) { // End of the file
+			Rio_writen(clientfd, &fileBuff, sizeof(fileBuff));
+			break;
 		}
-		else{
-			perror("Failed to open file");
+		else { // Read as many bytes as you have
+			Rio_writen(clientfd, fileBuff, numReadBytes);
+			Rio_writen(1, "\n", 1);
+			fileBuff += numReadBytes;
 		}
-		close(clientfd);
-		return responseAnswer;
 	}
+
+	Close(clientfd);
+	return 0; // Success
 
 }// fileGet
 
