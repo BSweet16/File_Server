@@ -11,11 +11,12 @@ using namespace std;
 // Const values
 const char BUFFER_PADDING[2] = { 0x00, 0x00 }; // 2 bytes of padding (arbitrary 0's)
 const unsigned int MAXDATASIZE = 100;
+const int SUCCESS = 0;
 
 // Return 0 on success, -1 on failure
 int newKey(const char *machineName, unsigned short port, unsigned int secretKey, unsigned int newKey) {
 
-	int answer = 0; 
+	int answer = SUCCESS; 
 	rio_t rio;
 	int clientfd;
 
@@ -52,7 +53,6 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 	int responseAnswer = 0; 
 	rio_t rio;
 	int clientfd;
-	char *fileBuff[MAXDATASIZE];
 
 	//change info to network byte order
 	unsigned int secKey = htonl(secretKey);
@@ -70,28 +70,49 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 
 	while(1){
 		// Transmit first 100 bytes or size of the file back to the client
-		size_t numReadBytes = Rio_readn(clientfd, fileBuff, MAXDATASIZE);
+		size_t numReadBytes = Rio_readn(clientfd, result, MAXDATASIZE);
 		
 		if (numReadBytes == 0) { // End of the file
-			Rio_writen(clientfd, &fileBuff, sizeof(fileBuff));
-			break;
+			Rio_writen(clientfd, &result, sizeof(result));
+			break; // Exit while()
 		}
-		else { // Read as many bytes as you have
-			Rio_writen(clientfd, fileBuff, numReadBytes);
+		else { // Read as many bytes as you have, and move index
+			Rio_writen(clientfd, result, numReadBytes);
 			Rio_writen(1, "\n", 1);
-			fileBuff += numReadBytes;
+			result += numReadBytes;
 		}
 	}
 
 	Close(clientfd);
-	return 0; // Success
+	return SUCCESS; // Success
 
 }// fileGet
 
 int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength) {
+	// Usage: /fileDigest machineName port secretKey fileName
+	// Local Variable
 	int answer;
+	int responseAnswer = 0; 
+	rio_t rio;
+	int clientfd;
+	char *fileBuff[MAXDATASIZE];
 
-	// Code
+	// Change info to network byte order
+	unsigned int secKey = htonl(secretKey);
+	unsigned short type = htons(0);
+	unsigned int recievedFileName = htonl(newKey);
+
+	clientfd = Open_clientfd(machineName, port);
+	Rio_readinitb(&rio, clientfd);
+
+	// Send seckey for validation from server
+	Rio_writen(clientfd, secKey, sizeof(secKey);
+		
+	// Tell server what type of request this is
+	Rio_writen(clientfd, type, sizeof(type);
+
+	// Read in file to generate a cryptographic digest of
+	size_t numReadBytes = Rio_readn(clientfd, fileBuff, MAXDATASIZE);
 
 	return answer;
 }
