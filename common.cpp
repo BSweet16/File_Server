@@ -72,15 +72,10 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 		return responseAnswer;
 	}
 	else {
-		if (int openFile = open(fileName, 0) == 0){ // If the file exists
+		char *fileBuff[MAXDATASIZE];
+		if ((ssize_t numFileBytes = read(fileName, fileBuff, MAXDATASIZE)) >= 0){ // If the file exists
 			// Transmit first 100 bytes or size of the file back to the client
-			if (fileName.size() <= 100){
-				// Send the file
-				Rio_writen(clientfd, openFile, sizeof(openFile);
-			}
-			else { // Only send first 100 bytes
-				Rio_writen(clientfd, openFile, 100;
-			}
+			Rio_writen(clientfd, &fileBuff, sizeof(fileBuff);
 		}
 		else{
 			perror("Failed to open file");
@@ -88,6 +83,7 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 		close(clientfd);
 		return responseAnswer;
 	}
+
 }// fileGet
 
 int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength) {
