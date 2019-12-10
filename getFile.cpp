@@ -38,6 +38,11 @@ int main(int argc, char *argv[])
 		cout << "failure." << endl;
 	}
 	else
-		cout << "success." << endl;
+        cout << "buff bytes: ";
+        int index = 0;
+        while(index <= bufsize){
+            printf("%hhu", buf[index]);
+        }
+        
 	return 0;
 }
