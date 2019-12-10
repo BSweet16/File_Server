@@ -3,7 +3,7 @@
 //  Server
 //
 //  Created by Blake Sweet on 10/28/19.
-//  Copyright © 2019 Blake Sweet. All rights reserved.
+//  Copyright ï¿½ 2019 Blake Sweet. All rights reserved.
 
 #include <iostream>
 #include <csignal>
@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "common.cpp"
-#include "csapp.h"
+
 
 void printOutput(unsigned int secretKey, short requestType, string detail, int completion) {
 	
