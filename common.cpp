@@ -14,6 +14,21 @@ const unsigned int MAXDATASIZE = 100;
 const unsigned int SUCCESS = 0;
 const int FAILURE = -1;
 
+void RedirectStandardStreamsToTemp(int *_piOriginalSTDIN_FILENO, int *_piOriginalSTDOUT_FILENO, int *_piOriginalSTDERR_FILENO){
+        fflush(stdout);
+        fflush(stderr);
+
+        *_piOriginalSTDIN_FILENO = dup(STDIN_FILENO);
+        *_piOriginalSTDOUT_FILENO = dup(STDOUT_FILENO);
+        *_piOriginalSTDERR_FILENO = dup(STDERR_FILENO);
+
+        int devnull = open(TMP_PATH.c_str(), O_RDWR);
+        dup2(devnull, STDIN_FILENO);
+        dup2(devnull, STDOUT_FILENO);
+        dup2(devnull, STDERR_FILENO);
+        close(devnull);
+}
+
 // Return 0 on success, -1 on failure
 int newKey(const char *machineName, unsigned short port, unsigned int secretKey, unsigned int newKey) {
 
@@ -98,10 +113,10 @@ int fileDigest(char *machineName, unsigned short port, unsigned int secretKey,
 			   const char *fileName, char *result, unsigned int *resultLength) {
 	// Usage: /fileDigest machineName port secretKey fileName
 	// Local Variable
-	int answer;
-	int responseAnswer = 0; 
+	int returnValue;
 	rio_t rio;
 	int clientfd;
+	//??? content;
 
 	// Change info to network byte order
 	unsigned int secKey = htonl(secretKey);
@@ -120,9 +135,29 @@ int fileDigest(char *machineName, unsigned short port, unsigned int secretKey,
 	// Read in file to generate a cryptographic digest of
 	size_t numReadBytes = Rio_readn(clientfd, result, MAXDATASIZE);
 
+	// Exec SHA256
+    pid_t pid = fork();
+    // if (pid == 0){ // I am the child
+    //     RedirectStandardStreamsToTemp(&iOriginalSTDIN_FILENO, &iOriginalSTDOUT_FILENO, &iOriginalSTDERR_FILENO); // Redirect standard output to a tmp file
+    //     returnValue = execvp("/usr/bin/sha256sum", fileName.c_str()); // Exec a process to execute the command
+    //     if (returnValue < 0){ // Returned with error
+    //         perror("run error");
+    //     }
+    // }
+    // else{ // I am the parent
+    //     waitpid(pid, 0, 0);
+        
+    //     // Read the temp file created into tmp buffer
+    //     ifstream tempFile("/usr/bin/temp/tempOut.txt"); // Taking file as inputstream
+    //     string content = "";
+    //     if(tempFile) {
+    //        ostringstream ss;
+    //        ss << tempFile.rdbuf(); // Reading data
+    //        content = ss.str();
+    //     }
+    // }
 
-
-	return answer;
+	return content;
 }
 
 // Extra Credit
