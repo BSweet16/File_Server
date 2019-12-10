@@ -11,7 +11,8 @@ using namespace std;
 // Const values
 const char BUFFER_PADDING[2] = { 0x00, 0x00 }; // 2 bytes of padding (arbitrary 0's)
 const unsigned int MAXDATASIZE = 100;
-const int SUCCESS = 0;
+const unsigned int SUCCESS = 0;
+const int FAILURE = -1;
 
 // Return 0 on success, -1 on failure
 int newKey(const char *machineName, unsigned short port, unsigned int secretKey, unsigned int newKey) {
@@ -71,6 +72,11 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 	while(1){
 		// Transmit first 100 bytes or size of the file back to the client
 		size_t numReadBytes = Rio_readn(clientfd, result, MAXDATASIZE);
+
+		if (numReadBytes == FAILURE){ // Error finding file
+			cout << "File does not exist or is not accessible\n";
+			return FAILURE;
+		}
 		
 		if (numReadBytes == 0) { // End of the file
 			Rio_writen(clientfd, &result, sizeof(result));
@@ -88,14 +94,14 @@ int fileGet(const char *machineName, unsigned int port, unsigned int secretKey,
 
 }// fileGet
 
-int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, const char *fileName, char *result, unsigned int *resultLength) {
+int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, 
+			   const char *fileName, char *result, unsigned int *resultLength) {
 	// Usage: /fileDigest machineName port secretKey fileName
 	// Local Variable
 	int answer;
 	int responseAnswer = 0; 
 	rio_t rio;
 	int clientfd;
-	char *fileBuff[MAXDATASIZE];
 
 	// Change info to network byte order
 	unsigned int secKey = htonl(secretKey);
@@ -112,7 +118,9 @@ int fileDigest(char *machineName, unsigned short port, unsigned int secretKey, c
 	Rio_writen(clientfd, type, sizeof(type);
 
 	// Read in file to generate a cryptographic digest of
-	size_t numReadBytes = Rio_readn(clientfd, fileBuff, MAXDATASIZE);
+	size_t numReadBytes = Rio_readn(clientfd, result, MAXDATASIZE);
+
+
 
 	return answer;
 }
